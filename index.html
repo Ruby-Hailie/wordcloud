@@ -18,8 +18,12 @@
     --text-muted: #8b949e;
     --accent: #7c6af5;
     --accent2: #4ecdc4;
+    --green: #3fb950;
+    --red: #f85149;
     --radius: 12px;
   }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -31,7 +35,7 @@
   }
 
   header {
-    padding: 28px 40px 20px;
+    padding: 20px 40px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -39,167 +43,144 @@
   }
 
   .logo-icon {
-    width: 38px;
-    height: 38px;
+    width: 36px; height: 36px;
     background: linear-gradient(135deg, #7c6af5, #4ecdc4);
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
   }
 
   header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-size: 20px; font-weight: 700; letter-spacing: 0.02em;
     background: linear-gradient(90deg, #b4a8ff, #4ecdc4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  header p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-left: auto;
-  }
+  header p { font-size: 13px; color: var(--text-muted); margin-left: auto; }
 
   .main {
     flex: 1;
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 0;
-    height: calc(100vh - 81px);
+    grid-template-columns: 390px 1fr;
+    height: calc(100vh - 69px);
   }
 
   .panel {
     background: var(--surface);
     border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    gap: 20px;
-    overflow-y: auto;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
 
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
+  /* Tab bar */
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .tab {
+    flex: 1; padding: 12px 8px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
     color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 8px;
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 5px; border-radius: 8px;
+    min-width: 16px; text-align: center;
+  }
+
+  .tab-panel {
+    display: none; flex-direction: column;
+    padding: 20px; gap: 18px;
+    overflow-y: auto; flex: 1;
+  }
+
+  .tab-panel.active { display: flex; }
+
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;
   }
 
   textarea {
     width: 100%;
-    height: 180px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1.7;
-    padding: 14px;
-    resize: none;
-    outline: none;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text);
+    font-family: inherit; font-size: 14px; line-height: 1.7;
+    padding: 12px; resize: none; outline: none;
     transition: border-color 0.2s;
   }
 
   textarea:focus { border-color: var(--accent); }
   textarea::placeholder { color: var(--text-muted); }
 
-  .quick-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .quick-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
 
   .quick-btn {
-    padding: 5px 12px;
-    font-size: 12px;
-    font-family: inherit;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    padding: 4px 11px; font-size: 12px; font-family: inherit;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
   }
 
   .quick-btn:hover {
-    background: rgba(124, 106, 245, 0.15);
-    border-color: var(--accent);
-    color: var(--accent);
+    background: rgba(124,106,245,0.15);
+    border-color: var(--accent); color: var(--accent);
   }
 
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+  .control-group { display: flex; flex-direction: column; gap: 11px; }
 
   .control-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 10px;
   }
 
   .control-row label {
-    font-size: 13px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    min-width: 70px;
+    font-size: 13px; color: var(--text-muted);
+    white-space: nowrap; min-width: 70px;
   }
 
   input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 2px;
-    outline: none;
+    flex: 1; -webkit-appearance: none;
+    height: 4px; background: var(--surface2);
+    border-radius: 2px; outline: none;
   }
 
   input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent);
-    cursor: pointer;
-    transition: transform 0.15s;
+    -webkit-appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--accent);
+    cursor: pointer; transition: transform 0.15s;
   }
 
   input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
   .range-val {
-    font-size: 12px;
-    color: var(--accent);
-    font-weight: 600;
-    min-width: 36px;
-    text-align: right;
+    font-size: 12px; color: var(--accent); font-weight: 600;
+    min-width: 36px; text-align: right;
   }
 
-  .palette-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
+  .palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
 
   .palette-item {
-    height: 38px;
-    border-radius: 8px;
-    cursor: pointer;
-    position: relative;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    overflow: hidden;
+    height: 36px; border-radius: 8px; cursor: pointer;
+    position: relative; border: 2px solid transparent;
+    transition: all 0.2s; overflow: hidden;
   }
 
   .palette-item:hover { transform: scale(1.05); }
@@ -210,264 +191,278 @@
   }
 
   .palette-item span {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: rgba(255,255,255,0.85);
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: rgba(255,255,255,0.9);
+    font-weight: 600; letter-spacing: 0.03em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
 
-  .shape-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
+  .shape-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
   .shape-btn {
-    height: 38px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 11px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
+    height: 36px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text-muted); font-size: 11px; font-family: inherit;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .shape-btn:hover, .shape-btn.active {
-    background: rgba(124, 106, 245, 0.15);
-    border-color: var(--accent);
-    color: var(--accent);
+    background: rgba(124,106,245,0.15);
+    border-color: var(--accent); color: var(--accent);
   }
 
-  .shape-btn svg { width: 16px; height: 16px; }
-
   .stopwords-area {
-    width: 100%;
-    height: 70px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-family: inherit;
-    font-size: 12px;
-    padding: 10px 12px;
-    resize: none;
-    outline: none;
-    line-height: 1.6;
+    width: 100%; height: 72px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text-muted); font-family: inherit;
+    font-size: 12px; padding: 10px 12px; resize: none; outline: none; line-height: 1.6;
   }
 
   .stopwords-area:focus { border-color: var(--accent); }
 
-  .generate-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #7c6af5, #5b51d8);
-    border: none;
-    border-radius: var(--radius);
-    color: #fff;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.05em;
-    position: relative;
-    overflow: hidden;
+  /* ===== 词典面板 ===== */
+
+  .dict-input-row {
+    display: flex; gap: 8px; align-items: stretch;
   }
 
-  .generate-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0);
-    transition: background 0.2s;
+  .dict-input-row input[type="text"] {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: inherit;
+    font-size: 13px; padding: 8px 12px; outline: none;
+    transition: border-color 0.2s;
   }
 
-  .generate-btn:hover::after { background: rgba(255,255,255,0.08); }
-  .generate-btn:active { transform: scale(0.98); }
+  .dict-input-row input[type="text"]:focus { border-color: var(--accent); }
+  .dict-input-row input[type="text"]::placeholder { color: var(--text-muted); }
 
-  .export-btn {
-    width: 100%;
-    padding: 10px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
+  .dict-input-row input[type="number"] {
+    width: 68px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: inherit;
+    font-size: 13px; padding: 8px 10px; outline: none; text-align: center;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
   }
 
-  .export-btn:hover {
-    background: var(--surface2);
-    border-color: rgba(255,255,255,0.15);
-    color: var(--text);
+  .dict-input-row input[type="number"]::-webkit-outer-spin-button,
+  .dict-input-row input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .dict-input-row input[type="number"]:focus { border-color: var(--accent); }
+
+  .add-btn {
+    padding: 8px 14px; background: var(--accent);
+    border: none; border-radius: 8px; color: #fff;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
   }
 
-  .canvas-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-    background: var(--bg);
-    position: relative;
-    overflow: hidden;
+  .add-btn:hover { opacity: 0.85; }
+
+  .dict-hint {
+    font-size: 11px; color: var(--text-muted); line-height: 1.6;
+    padding: 8px 10px; background: rgba(124,106,245,0.07);
+    border-radius: 6px; border-left: 2px solid var(--accent);
   }
 
-  .canvas-wrap {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+  .dict-list-header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 8px;
   }
 
-  #wc-canvas {
-    display: block;
+  .dict-list-header span { font-size: 11px; color: var(--text-muted); }
+
+  .dict-actions { display: flex; gap: 6px; }
+
+  .dict-action-btn {
+    padding: 3px 10px; font-size: 11px; font-family: inherit;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s;
   }
 
-  .tooltip {
-    position: fixed;
-    background: rgba(20,20,30,0.92);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 13px;
-    color: #fff;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s;
-    z-index: 100;
-    white-space: nowrap;
+  .dict-action-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .dict-action-btn.danger:hover { color: var(--red); border-color: var(--red); }
+
+  .dict-list {
+    display: flex; flex-direction: column; gap: 4px;
+    max-height: 240px; overflow-y: auto;
   }
 
-  .tooltip strong { color: var(--accent); }
-  .tooltip span { color: var(--text-muted); font-size: 12px; }
+  .dict-list::-webkit-scrollbar { width: 4px; }
+  .dict-list::-webkit-scrollbar-track { background: transparent; }
+  .dict-list::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
 
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
+  .dict-empty {
+    text-align: center; padding: 28px 16px;
+    color: var(--text-muted); font-size: 13px; line-height: 1.7;
   }
 
-  .empty-state .icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.3;
+  .dict-empty .icon { font-size: 28px; margin-bottom: 8px; opacity: 0.3; }
+
+  .dict-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; background: var(--surface2);
+    border-radius: 8px; border: 1px solid transparent;
+    transition: border-color 0.15s;
   }
 
-  .empty-state p { font-size: 14px; line-height: 1.6; }
+  .dict-item:hover { border-color: var(--border); }
 
-  .stats-bar {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
-    background: rgba(22,27,34,0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    padding: 8px 22px;
-    font-size: 12px;
-    color: var(--text-muted);
-    white-space: nowrap;
+  .dict-item-word {
+    flex: 1; font-size: 13px; font-weight: 600; color: var(--text);
   }
 
-  .stats-bar span strong { color: var(--text); font-weight: 600; }
-
-  .loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(13,17,23,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 14px;
-    z-index: 10;
-    display: none;
+  .dict-item-weight {
+    font-size: 11px; padding: 2px 8px;
+    border-radius: 12px; font-weight: 700; white-space: nowrap;
   }
 
-  .spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid rgba(124,106,245,0.2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
+  .weight-high { background: rgba(63,185,80,0.15); color: var(--green); }
+  .weight-mid  { background: rgba(124,106,245,0.15); color: var(--accent); }
+  .weight-low  { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+
+  .dict-item-del {
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; border-radius: 4px; font-size: 14px;
+    transition: all 0.15s; flex-shrink: 0;
   }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .dict-item-del:hover { background: rgba(248,81,73,0.15); color: var(--red); }
 
-  .loading-text { font-size: 13px; color: var(--text-muted); }
+  .import-export-row { display: flex; gap: 8px; }
 
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .ie-btn {
+    flex: 1; padding: 8px; font-size: 12px; font-family: inherit;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s; text-align: center;
   }
 
+  .ie-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .dict-search {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: inherit;
+    font-size: 13px; padding: 7px 12px; outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .dict-search:focus { border-color: var(--accent); }
+  .dict-search::placeholder { color: var(--text-muted); }
+
+  /* toggle */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
   .toggle-label { font-size: 13px; color: var(--text-muted); }
 
   .toggle {
-    width: 36px;
-    height: 20px;
-    background: var(--surface2);
-    border-radius: 10px;
-    cursor: pointer;
-    position: relative;
-    border: 1px solid var(--border);
-    transition: background 0.2s;
-    flex-shrink: 0;
+    width: 36px; height: 20px; background: var(--surface2);
+    border-radius: 10px; cursor: pointer; position: relative;
+    border: 1px solid var(--border); transition: background 0.2s; flex-shrink: 0;
   }
 
   .toggle::after {
-    content: '';
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    top: 2px;
-    left: 2px;
-    transition: all 0.2s;
+    content: ''; position: absolute;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text-muted); top: 2px; left: 2px; transition: all 0.2s;
   }
 
   .toggle.on { background: var(--accent); border-color: var(--accent); }
   .toggle.on::after { left: 18px; background: #fff; }
 
-  .bg-color-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  /* palette/bg/shape */
+  .bg-color-row { display: flex; gap: 7px; flex-wrap: wrap; }
 
   .bg-swatch {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
+    width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; transition: all 0.2s;
   }
 
   .bg-swatch.active, .bg-swatch:hover { border-color: #fff; transform: scale(1.1); }
+
+  /* bottom buttons */
+  .panel-footer {
+    padding: 16px 20px; border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
+  }
+
+  .generate-btn {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, #7c6af5, #5b51d8);
+    border: none; border-radius: var(--radius);
+    color: #fff; font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.04em;
+  }
+
+  .generate-btn:hover { opacity: 0.88; }
+  .generate-btn:active { transform: scale(0.98); }
+
+  .export-btn {
+    width: 100%; padding: 9px; background: transparent;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text-muted); font-family: inherit; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .export-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* canvas area */
+  .canvas-area {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 28px; background: var(--bg); position: relative; overflow: hidden;
+  }
+
+  .canvas-wrap {
+    position: relative; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+
+  #wc-canvas { display: block; }
+
+  .tooltip {
+    position: fixed; background: rgba(20,20,30,0.92);
+    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 7px 13px; font-size: 13px; color: #fff;
+    pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 100; white-space: nowrap;
+  }
+
+  .tooltip strong { color: var(--accent); }
+  .tooltip span { color: var(--text-muted); font-size: 12px; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  .stats-bar {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 18px;
+    background: rgba(22,27,34,0.85); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: 30px;
+    padding: 7px 20px; font-size: 12px; color: var(--text-muted); white-space: nowrap;
+  }
+
+  .stats-bar span strong { color: var(--text); font-weight: 600; }
+
+  .loading-overlay {
+    position: absolute; inset: 0;
+    background: rgba(13,17,23,0.7);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px; z-index: 10;
+  }
+
+  .spinner {
+    width: 34px; height: 34px;
+    border: 3px solid rgba(124,106,245,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--text-muted); }
+
+  .panel-scroll { display: flex; flex-direction: column; gap: 18px; overflow-y: auto; flex: 1; padding: 20px; }
 </style>
 </head>
 <body>
@@ -481,79 +476,139 @@
 <div class="main">
   <div class="panel">
 
-    <div>
-      <div class="section-label">输入文本</div>
-      <textarea id="input-text" placeholder="在此输入文本，支持中文、英文及混合内容。词语出现频次越高，在词云中显示越大。
+    <!-- Tab 导航 -->
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('text')">✏️ 文本输入</button>
+      <button class="tab" onclick="switchTab('dict')" id="dict-tab">📖 自定义词典 <span class="tab-badge" id="dict-badge" style="display:none">0</span></button>
+      <button class="tab" onclick="switchTab('style')">🎨 样式设置</button>
+    </div>
+
+    <!-- 文本输入面板 -->
+    <div class="tab-panel active" id="tab-text">
+      <div>
+        <div class="section-label">输入文本</div>
+        <textarea id="input-text" style="height:200px" placeholder="在此输入文本，支持中文、英文及混合内容。词语出现频次越高，在词云中显示越大。
 
 可以粘贴文章、评论、歌词、诗歌等任意内容…"></textarea>
-      <div class="quick-buttons" style="margin-top:8px;">
-        <button class="quick-btn" onclick="loadSample('tech')">科技文章</button>
-        <button class="quick-btn" onclick="loadSample('poem')">古诗词</button>
-        <button class="quick-btn" onclick="loadSample('food')">美食评论</button>
-        <button class="quick-btn" onclick="loadSample('city')">城市生活</button>
-        <button class="quick-btn" onclick="clearText()">清空</button>
+        <div class="quick-buttons" style="margin-top:8px">
+          <button class="quick-btn" onclick="loadSample('tech')">科技文章</button>
+          <button class="quick-btn" onclick="loadSample('poem')">古诗词</button>
+          <button class="quick-btn" onclick="loadSample('food')">美食评论</button>
+          <button class="quick-btn" onclick="loadSample('city')">城市生活</button>
+          <button class="quick-btn" onclick="clearText()">清空</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">过滤停用词（逗号分隔）</div>
+        <textarea class="stopwords-area" id="stopwords">的, 了, 是, 在, 和, 与, 也, 都, 但, 而, 这, 那, 有, 一, 不, 我, 你, 他, 她, 它, 们, 中, 为, 以, 所, 很, 就, 对, 可, 又, 上, 下, 来, 去, 到, 出, 着, 过, 没, 只, 还, 会, 时, 把, 被, 要, 多, 少, 让, 说, 个, 人, 大, 小, 地</textarea>
       </div>
     </div>
 
-    <div>
-      <div class="section-label">配色方案</div>
-      <div class="palette-grid" id="palette-grid"></div>
-    </div>
+    <!-- 词典面板 -->
+    <div class="tab-panel" id="tab-dict">
 
-    <div>
-      <div class="section-label">背景颜色</div>
-      <div class="bg-color-row" id="bg-row"></div>
-    </div>
-
-    <div>
-      <div class="section-label">词云形状</div>
-      <div class="shape-grid" id="shape-grid"></div>
-    </div>
-
-    <div class="control-group">
-      <div class="section-label">参数调节</div>
-
-      <div class="control-row">
-        <label>词语数量</label>
-        <input type="range" id="word-count" min="20" max="200" value="80" step="5">
-        <span class="range-val" id="wc-val">80</span>
+      <div class="dict-hint">
+        自定义词典可以指定词语及其权重，权重越高词语显示越大。词典词语会被优先识别，适合专业术语、品牌名、人名等。
       </div>
 
-      <div class="control-row">
-        <label>最大字号</label>
-        <input type="range" id="font-max" min="40" max="120" value="72" step="4">
-        <span class="range-val" id="fm-val">72</span>
+      <div>
+        <div class="section-label">添加词条</div>
+        <div class="dict-input-row" style="margin-bottom:6px">
+          <input type="text" id="dict-word" placeholder="输入词语" maxlength="20" onkeydown="if(event.key==='Enter')addDictWord()">
+          <input type="number" id="dict-weight" placeholder="权重" value="10" min="1" max="100">
+          <button class="add-btn" onclick="addDictWord()">添加</button>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); padding:0 2px">权重范围 1–100，默认 10；权重 ≥ 30 为高权重（红色标签）</div>
       </div>
 
-      <div class="control-row">
-        <label>词语间距</label>
-        <input type="range" id="padding" min="1" max="10" value="3" step="1">
-        <span class="range-val" id="pd-val">3</span>
+      <div>
+        <div class="dict-list-header">
+          <span id="dict-count-label">词典为空</span>
+          <div class="dict-actions">
+            <button class="dict-action-btn" onclick="importDict()">导入</button>
+            <button class="dict-action-btn" onclick="exportDict()">导出</button>
+            <button class="dict-action-btn danger" onclick="clearDict()">清空</button>
+          </div>
+        </div>
+        <input type="text" class="dict-search" id="dict-search" placeholder="搜索词典…" oninput="renderDictList()" style="margin-bottom:8px">
+        <div class="dict-list" id="dict-list">
+          <div class="dict-empty"><div class="icon">📖</div>词典为空<br>添加词语后，分词将优先识别这些词</div>
+        </div>
       </div>
 
-      <div class="toggle-row">
-        <span class="toggle-label">允许竖排文字</span>
-        <div class="toggle" id="rotate-toggle" onclick="toggleRotate()"></div>
+      <div class="import-export-row">
+        <label class="ie-btn" style="cursor:pointer">
+          📂 从文件导入
+          <input type="file" accept=".txt,.csv,.json" style="display:none" onchange="importFromFile(event)">
+        </label>
+        <button class="ie-btn" onclick="loadPresetDict('tech')">💻 预设：科技词汇</button>
+        <button class="ie-btn" onclick="loadPresetDict('brand')">🏷️ 预设：常用品牌</button>
+      </div>
+
+    </div>
+
+    <!-- 样式面板 -->
+    <div class="tab-panel" id="tab-style">
+      <div class="panel-scroll" style="padding:0; overflow:visible">
+
+        <div>
+          <div class="section-label">配色方案</div>
+          <div class="palette-grid" id="palette-grid"></div>
+        </div>
+
+        <div>
+          <div class="section-label">背景颜色</div>
+          <div class="bg-color-row" id="bg-row"></div>
+        </div>
+
+        <div>
+          <div class="section-label">词云形状</div>
+          <div class="shape-grid" id="shape-grid"></div>
+        </div>
+
+        <div class="control-group">
+          <div class="section-label">参数调节</div>
+          <div class="control-row">
+            <label>词语数量</label>
+            <input type="range" id="word-count" min="20" max="200" value="80" step="5">
+            <span class="range-val" id="wc-val">80</span>
+          </div>
+          <div class="control-row">
+            <label>最大字号</label>
+            <input type="range" id="font-max" min="40" max="120" value="72" step="4">
+            <span class="range-val" id="fm-val">72</span>
+          </div>
+          <div class="control-row">
+            <label>词语间距</label>
+            <input type="range" id="padding" min="1" max="10" value="3" step="1">
+            <span class="range-val" id="pd-val">3</span>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">允许竖排文字</span>
+            <div class="toggle" id="rotate-toggle" onclick="toggleRotate()"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <div>
-      <div class="section-label">过滤停用词（逗号分隔）</div>
-      <textarea class="stopwords-area" id="stopwords" placeholder="的, 了, 是, 在, 和, 与, 也, 都, 但, 而, 这, 那, 有…">的, 了, 是, 在, 和, 与, 也, 都, 但, 而, 这, 那, 有, 一, 不, 我, 你, 他, 她, 它, 们, 中, 为, 以, 所, 很, 就, 对, 可, 又, 上, 下, 来, 去, 到, 出, 着, 过, 没, 只, 还, 会, 时, 把, 被, 要, 多, 少, 让, 说, 个, 人, 大, 小, 地</textarea>
+    <!-- 底部固定按钮 -->
+    <div class="panel-footer">
+      <button class="generate-btn" onclick="generateCloud()">✦ 生成词云</button>
+      <button class="export-btn" onclick="exportPNG()">↓ 导出 PNG 图片</button>
     </div>
-
-    <button class="generate-btn" onclick="generateCloud()">✦ 生成词云</button>
-    <button class="export-btn" onclick="exportPNG()">↓ 导出 PNG 图片</button>
 
   </div>
 
+  <!-- 词云画布区 -->
   <div class="canvas-area" id="canvas-area">
-    <div class="loading-overlay" id="loading">
+    <div class="loading-overlay" id="loading" style="display:none">
       <div class="spinner"></div>
       <div class="loading-text">词云生成中…</div>
     </div>
 
-    <div class="canvas-wrap" id="canvas-wrap">
+    <div class="canvas-wrap" id="canvas-wrap" style="display:none">
       <canvas id="wc-canvas" width="760" height="560"></canvas>
     </div>
 
@@ -562,9 +617,10 @@
       <p>在左侧输入文本<br>点击「生成词云」即可创建</p>
     </div>
 
-    <div class="stats-bar" id="stats-bar" style="display:none;">
+    <div class="stats-bar" id="stats-bar" style="display:none">
       <span>共 <strong id="total-words">0</strong> 个词</span>
       <span>展示 <strong id="shown-words">0</strong> 个</span>
+      <span>词典加权 <strong id="dict-boosted">0</strong> 个</span>
       <span>最高频 <strong id="top-word">—</strong></span>
     </div>
   </div>
@@ -572,10 +628,14 @@
 
 <div class="tooltip" id="tooltip">
   <strong id="tt-word"></strong> &nbsp;
-  <span>出现 <strong id="tt-count" style="color:#fff"></strong> 次</span>
+  <span>权重 <strong id="tt-count" style="color:#fff"></strong></span>
 </div>
 
+<!-- 隐藏的导入 textarea -->
+<textarea id="import-area" style="display:none"></textarea>
+
 <script>
+// ===== 数据 =====
 const PALETTES = [
   { name: '极光', colors: ['#a78bfa','#7c6af5','#4ecdc4','#45b7d1','#96e6a1','#d4fc79'] },
   { name: '日落', colors: ['#ff6b6b','#feca57','#ff9f43','#ee5a24','#fd79a8','#e17055'] },
@@ -587,9 +647,7 @@ const PALETTES = [
   { name: '莫兰迪', colors: ['#b8a9c9','#9b8ea7','#d4a5a5','#b5c4b1','#c8b8a2','#a8bac4'] },
 ];
 
-const BG_COLORS = [
-  '#0d1117','#ffffff','#1a1a2e','#0a0a0a','#f8f4ef','#1e3a5f','#2d1b33','#0d2818',
-];
+const BG_COLORS = ['#0d1117','#ffffff','#1a1a2e','#0a0a0a','#f8f4ef','#1e3a5f','#2d1b33','#0d2818'];
 
 const SHAPES = [
   { name: '矩形', id: 'rect' },
@@ -598,127 +656,277 @@ const SHAPES = [
   { name: '星形', id: 'star' },
 ];
 
-let activePalette = 0;
-let activeBg = 0;
-let activeShape = 0;
-let allowRotate = false;
+const PRESET_DICTS = {
+  tech: [
+    ['人工智能',50],['机器学习',45],['深度学习',42],['神经网络',38],['大语言模型',48],
+    ['ChatGPT',40],['GPT',35],['Claude',35],['算法',30],['数据集',28],
+    ['云计算',32],['区块链',25],['元宇宙',25],['物联网',22],['5G',20],
+    ['量子计算',30],['芯片',28],['半导体',26],['GPU',24],['算力',22],
+    ['开源',18],['GitHub',18],['Python',20],['TensorFlow',18],['PyTorch',18],
+  ],
+  brand: [
+    ['苹果',40],['华为',40],['小米',35],['阿里巴巴',38],['腾讯',38],
+    ['字节跳动',35],['百度',32],['京东',30],['美团',28],['滴滴',26],
+    ['拼多多',28],['抖音',30],['微信',35],['支付宝',30],['淘宝',28],
+    ['天猫',26],['快手',24],['微博',22],['知乎',20],['B站',24],
+  ],
+};
+
+// ===== 状态 =====
+let activePalette = 0, activeBg = 0, activeShape = 0, allowRotate = false;
 let wordFreqMap = {};
-let currentWords = [];
+let customDict = [];   // [{word, weight}]
 
-function initUI() {
-  const pg = document.getElementById('palette-grid');
-  PALETTES.forEach((p, i) => {
-    const el = document.createElement('div');
-    el.className = 'palette-item' + (i === 0 ? ' active' : '');
-    el.style.background = `linear-gradient(135deg, ${p.colors[0]}, ${p.colors[2]}, ${p.colors[4]})`;
-    el.innerHTML = `<span>${p.name}</span>`;
-    el.onclick = () => { activePalette = i; document.querySelectorAll('.palette-item').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
-    pg.appendChild(el);
-  });
-
-  const br = document.getElementById('bg-row');
-  BG_COLORS.forEach((c, i) => {
-    const el = document.createElement('div');
-    el.className = 'bg-swatch' + (i === 0 ? ' active' : '');
-    el.style.background = c;
-    el.style.border = c === '#ffffff' ? '2px solid rgba(255,255,255,0.2)' : '2px solid transparent';
-    el.onclick = () => { activeBg = i; document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
-    br.appendChild(el);
-  });
-
-  const sg = document.getElementById('shape-grid');
-  SHAPES.forEach((s, i) => {
-    const el = document.createElement('button');
-    el.className = 'shape-btn' + (i === 0 ? ' active' : '');
-    el.innerHTML = s.name;
-    el.onclick = () => { activeShape = i; document.querySelectorAll('.shape-btn').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
-    sg.appendChild(el);
-  });
-
-  ['word-count', 'font-max', 'padding'].forEach(id => {
-    const el = document.getElementById(id);
-    const val = document.getElementById(id.replace('word-count','wc').replace('font-max','fm').replace('padding','pd') + '-val');
-    el.oninput = () => { val.textContent = el.value; };
-  });
+// ===== Tab 切换 =====
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const tabs = ['text','dict','style'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
 }
 
+// ===== 词典功能 =====
+function addDictWord() {
+  const wordEl = document.getElementById('dict-word');
+  const weightEl = document.getElementById('dict-weight');
+  const word = wordEl.value.trim();
+  const weight = Math.min(100, Math.max(1, parseInt(weightEl.value) || 10));
+
+  if (!word) { wordEl.focus(); return; }
+  if (customDict.find(d => d.word === word)) {
+    // 更新已有词
+    customDict = customDict.map(d => d.word === word ? { word, weight } : d);
+  } else {
+    customDict.push({ word, weight });
+  }
+  wordEl.value = '';
+  wordEl.focus();
+  updateDictUI();
+}
+
+function removeDictWord(word) {
+  customDict = customDict.filter(d => d.word !== word);
+  updateDictUI();
+}
+
+function clearDict() {
+  if (customDict.length === 0) return;
+  if (!confirm('确定清空全部词典词条？')) return;
+  customDict = [];
+  updateDictUI();
+}
+
+function updateDictUI() {
+  const badge = document.getElementById('dict-badge');
+  const countLabel = document.getElementById('dict-count-label');
+  const n = customDict.length;
+  if (n > 0) {
+    badge.style.display = 'inline';
+    badge.textContent = n;
+    countLabel.textContent = `共 ${n} 条词典词条`;
+  } else {
+    badge.style.display = 'none';
+    countLabel.textContent = '词典为空';
+  }
+  renderDictList();
+}
+
+function renderDictList() {
+  const list = document.getElementById('dict-list');
+  const query = document.getElementById('dict-search').value.trim().toLowerCase();
+  const filtered = query
+    ? customDict.filter(d => d.word.toLowerCase().includes(query))
+    : customDict;
+
+  if (customDict.length === 0) {
+    list.innerHTML = '<div class="dict-empty"><div class="icon">📖</div>词典为空<br>添加词语后，分词将优先识别这些词</div>';
+    return;
+  }
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="dict-empty"><div class="icon">🔍</div>没有匹配的词条</div>';
+    return;
+  }
+
+  const sorted = [...filtered].sort((a, b) => b.weight - a.weight);
+  list.innerHTML = sorted.map(d => {
+    const cls = d.weight >= 30 ? 'weight-high' : d.weight >= 10 ? 'weight-mid' : 'weight-low';
+    const label = d.weight >= 30 ? '高' : d.weight >= 10 ? '中' : '低';
+    return `<div class="dict-item">
+      <span class="dict-item-word">${escHtml(d.word)}</span>
+      <span class="dict-item-weight ${cls}">权重 ${d.weight} · ${label}</span>
+      <button class="dict-item-del" onclick="removeDictWord('${escHtml(d.word)}')" title="删除">×</button>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function exportDict() {
+  if (customDict.length === 0) { alert('词典为空，无法导出'); return; }
+  const lines = customDict.map(d => `${d.word}\t${d.weight}`).join('\n');
+  const blob = new Blob(['# 词云词典\n# 格式：词语<TAB>权重\n' + lines], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '词云词典_' + new Date().toLocaleDateString('zh') + '.txt';
+  a.click();
+}
+
+function importDict() {
+  const text = prompt('粘贴词典内容（每行一个词，格式：词语 或 词语\\t权重）：');
+  if (!text) return;
+  parseAndMergeDict(text);
+}
+
+function importFromFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    parseAndMergeDict(ev.target.result);
+    e.target.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseAndMergeDict(text) {
+  const lines = text.split(/[\n\r]+/);
+  let added = 0;
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith('#')) return;
+    // 支持 JSON 数组行：["词",权重]
+    if (line.startsWith('[')) {
+      try {
+        const arr = JSON.parse(line);
+        if (Array.isArray(arr) && arr[0]) {
+          const word = String(arr[0]).trim();
+          const weight = Math.min(100, Math.max(1, parseInt(arr[1]) || 10));
+          if (word) { mergeDictWord(word, weight); added++; }
+        }
+      } catch(e) {}
+      return;
+    }
+    // 支持 tab 或空格分隔
+    const parts = line.split(/\t|,|，/).map(p => p.trim());
+    const word = parts[0];
+    const weight = Math.min(100, Math.max(1, parseInt(parts[1]) || 10));
+    if (word && word.length >= 1) { mergeDictWord(word, weight); added++; }
+  });
+  updateDictUI();
+  if (added > 0) alert(`成功导入 ${added} 条词典词条`);
+  else alert('未识别到有效词条，请检查格式');
+}
+
+function mergeDictWord(word, weight) {
+  const existing = customDict.find(d => d.word === word);
+  if (existing) existing.weight = weight;
+  else customDict.push({ word, weight });
+}
+
+function loadPresetDict(type) {
+  const preset = PRESET_DICTS[type];
+  if (!preset) return;
+  preset.forEach(([word, weight]) => mergeDictWord(word, weight));
+  updateDictUI();
+  alert(`已加载 ${preset.length} 条预设词条（已合并到现有词典）`);
+}
+
+// ===== 分词 =====
 function tokenizeChinese(text) {
   const freq = {};
   const stopwords = new Set(
     document.getElementById('stopwords').value.split(/[,，\s]+/).map(w => w.trim()).filter(Boolean)
   );
+
+  // 1) 先处理自定义词典：对整个文本做完整扫描，找到词典词后记录并标记
+  const dictMap = {};
+  customDict.forEach(d => { dictMap[d.word] = d.weight; });
+
+  // 将文本中的词典词优先识别
+  const dictMatched = new Set();
+  if (customDict.length > 0) {
+    // 按词长降序排列避免短词先匹配
+    const dictWords = [...customDict].sort((a, b) => b.word.length - a.word.length);
+    let maskedText = text;
+    dictWords.forEach(({ word, weight }) => {
+      if (stopwords.has(word)) return;
+      const regex = new RegExp(escapeRegex(word), 'g');
+      const count = (maskedText.match(regex) || []).length;
+      if (count > 0) {
+        freq[word] = (freq[word] || 0) + count * weight;
+        dictMatched.add(word);
+      }
+    });
+  }
+
+  // 2) 普通滑窗分词
   const chunks = text.split(/[\n\r。！？…""''【】《》「」、；：,.!?;:"'\[\]()（）\s]+/);
   chunks.forEach(chunk => {
     if (!chunk.trim()) return;
-    if (/^[\u4e00-\u9fff]+$/.test(chunk)) {
+    const isChinese = /^[\u4e00-\u9fff]+$/.test(chunk);
+    if (isChinese) {
+      // 滑窗：优先跳过已被词典匹配的区域
       for (let len = 4; len >= 2; len--) {
         for (let i = 0; i <= chunk.length - len; i++) {
           const w = chunk.substring(i, i + len);
-          if (!stopwords.has(w)) freq[w] = (freq[w] || 0) + (len - 1);
+          if (!stopwords.has(w) && !dictMatched.has(w)) {
+            freq[w] = (freq[w] || 0) + (len - 1);
+          }
         }
       }
       for (let i = 0; i < chunk.length; i++) {
         const c = chunk[i];
-        if (!stopwords.has(c)) freq[c] = (freq[c] || 0) + 0.3;
+        if (!stopwords.has(c) && !dictMatched.has(c)) {
+          freq[c] = (freq[c] || 0) + 0.3;
+        }
       }
     } else {
       const words = chunk.match(/[a-zA-Z\u4e00-\u9fff]+/g) || [];
       words.forEach(w => {
-        if (w.length >= 2 && !stopwords.has(w) && !stopwords.has(w.toLowerCase())) {
-          freq[w.toLowerCase() === w ? w : w] = (freq[w] || 0) + 1;
+        if (w.length >= 2 && !stopwords.has(w) && !stopwords.has(w.toLowerCase()) && !dictMatched.has(w)) {
+          freq[w] = (freq[w] || 0) + 1;
         }
       });
     }
   });
-  return freq;
+
+  return { freq, dictMatched };
 }
 
-function getShapeMask(shape, w, h) {
-  const offscreen = document.createElement('canvas');
-  offscreen.width = w; offscreen.height = h;
-  const ctx = offscreen.getContext('2d');
-  ctx.fillStyle = '#000';
-
-  if (shape === 'rect') {
-    ctx.fillRect(w * 0.05, h * 0.05, w * 0.9, h * 0.9);
-  } else if (shape === 'circle') {
-    ctx.beginPath();
-    ctx.arc(w/2, h/2, Math.min(w,h) * 0.46, 0, Math.PI*2);
-    ctx.fill();
-  } else if (shape === 'diamond') {
-    ctx.beginPath();
-    ctx.moveTo(w/2, h*0.05);
-    ctx.lineTo(w*0.95, h/2);
-    ctx.lineTo(w/2, h*0.95);
-    ctx.lineTo(w*0.05, h/2);
-    ctx.closePath();
-    ctx.fill();
-  } else if (shape === 'star') {
-    const cx = w/2, cy = h/2;
-    const outerR = Math.min(w,h)*0.46, innerR = outerR*0.42;
-    ctx.beginPath();
-    for (let i = 0; i < 10; i++) {
-      const angle = (i * Math.PI / 5) - Math.PI/2;
-      const r = i % 2 === 0 ? outerR : innerR;
-      const x = cx + Math.cos(angle) * r, y = cy + Math.sin(angle) * r;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fill();
-  }
-  return offscreen;
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// ===== 形状 =====
+function getShapeFn(shapeId) {
+  if (shapeId === 'circle') return () => 1;
+  if (shapeId === 'diamond') return (t) => 1 / (Math.abs(Math.cos(t)) + Math.abs(Math.sin(t)));
+  if (shapeId === 'star') return (t) => {
+    const k = 5, ang = (t % (2*Math.PI/k)) - Math.PI/k;
+    return Math.cos(Math.PI/k) / Math.cos(ang);
+  };
+  return (t) => Math.min(1/Math.abs(Math.cos(t)), 1/Math.abs(Math.sin(t)));
+}
+
+// ===== 生成词云 =====
 function generateCloud() {
   const text = document.getElementById('input-text').value.trim();
   if (!text) { alert('请先输入文本内容'); return; }
 
   document.getElementById('loading').style.display = 'flex';
   document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('canvas-wrap').style.opacity = '0.3';
+  const wrap = document.getElementById('canvas-wrap');
+  wrap.style.display = 'block';
+  wrap.style.opacity = '0.3';
 
   setTimeout(() => {
-    wordFreqMap = tokenizeChinese(text);
+    const { freq, dictMatched } = tokenizeChinese(text);
+    wordFreqMap = freq;
+
     const maxWords = parseInt(document.getElementById('word-count').value);
     const palette = PALETTES[activePalette].colors;
     const bgColor = BG_COLORS[activeBg];
@@ -726,35 +934,32 @@ function generateCloud() {
     const padding = parseInt(document.getElementById('padding').value);
     const shapeId = SHAPES[activeShape].id;
 
-    const sorted = Object.entries(wordFreqMap).sort((a,b) => b[1]-a[1]).slice(0, maxWords);
-    currentWords = sorted;
+    const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]).slice(0, maxWords);
 
-    const totalWords = Object.keys(wordFreqMap).length;
-    document.getElementById('total-words').textContent = totalWords;
+    document.getElementById('total-words').textContent = Object.keys(freq).length;
     document.getElementById('shown-words').textContent = sorted.length;
+    document.getElementById('dict-boosted').textContent = dictMatched.size;
     document.getElementById('top-word').textContent = sorted[0] ? sorted[0][0] : '—';
 
     const canvas = document.getElementById('wc-canvas');
     const W = canvas.width, H = canvas.height;
-
-    const maskCanvas = getShapeMask(shapeId, W, H);
-    const list = sorted.map(([w, cnt]) => [w, cnt]);
+    const maxVal = sorted[0]?.[1] || 1;
 
     const colorFn = (word) => {
+      if (dictMatched.has(word)) {
+        // 词典词用更亮更显眼的颜色（调色板前两个）
+        const h = [...word].reduce((a,c) => a + c.charCodeAt(0), 0) % 2;
+        return palette[h];
+      }
       const h = [...word].reduce((a,c) => a + c.charCodeAt(0), 0) % palette.length;
       return palette[h];
     };
 
-    const rotFn = allowRotate ? () => Math.random() > 0.7 ? Math.PI / 2 : 0 : () => 0;
-
     try {
       WordCloud(canvas, {
-        list: list,
+        list: sorted,
         gridSize: Math.round(8 * W / 760),
-        weightFactor: (size) => {
-          const max = sorted[0]?.[1] || 1;
-          return Math.pow(size / max, 0.6) * maxFontSize;
-        },
+        weightFactor: (size) => Math.pow(size / maxVal, 0.6) * maxFontSize,
         fontFamily: "'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
         fontWeight: '700',
         color: colorFn,
@@ -762,33 +967,21 @@ function generateCloud() {
         rotationSteps: 2,
         backgroundColor: bgColor,
         padding: padding,
-        shape: (theta) => {
-          if (shapeId === 'circle') return 1;
-          if (shapeId === 'diamond') return 1 / (Math.abs(Math.cos(theta)) + Math.abs(Math.sin(theta)));
-          if (shapeId === 'star') {
-            const k = 5;
-            const t = (theta % (2*Math.PI/k)) - Math.PI/k;
-            return Math.cos(Math.PI/k) / Math.cos(t);
-          }
-          return Math.min(1/Math.abs(Math.cos(theta)), 1/Math.abs(Math.sin(theta)));
-        },
+        shape: getShapeFn(shapeId),
         minSize: 10,
         drawOutOfBound: false,
         origin: [W/2, H/2],
-        hover: null,
-        click: null,
       });
-    } catch(e) {}
+    } catch(e) { console.error(e); }
 
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('canvas-wrap').style.opacity = '1';
+    wrap.style.opacity = '1';
     document.getElementById('stats-bar').style.display = 'flex';
-
-    setupTooltip(canvas, sorted);
+    setupTooltip(canvas, freq, dictMatched);
   }, 80);
 }
 
-function setupTooltip(canvas, words) {
+function setupTooltip(canvas, freq, dictMatched) {
   const tooltip = document.getElementById('tooltip');
   canvas.onmousemove = (e) => {
     const rect = canvas.getBoundingClientRect();
@@ -796,9 +989,10 @@ function setupTooltip(canvas, words) {
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     const item = WordCloud.isWord(canvas, x, y);
     if (item) {
-      const freq = wordFreqMap[item] || 0;
-      document.getElementById('tt-word').textContent = item;
-      document.getElementById('tt-count').textContent = Math.round(freq);
+      const val = freq[item] || 0;
+      const isDict = dictMatched && dictMatched.has(item);
+      document.getElementById('tt-word').textContent = item + (isDict ? ' 📖' : '');
+      document.getElementById('tt-count').textContent = Math.round(val) + (isDict ? ' (词典加权)' : '');
       tooltip.style.left = (e.clientX + 14) + 'px';
       tooltip.style.top = (e.clientY - 34) + 'px';
       tooltip.style.opacity = '1';
@@ -809,6 +1003,7 @@ function setupTooltip(canvas, words) {
   canvas.onmouseleave = () => { tooltip.style.opacity = '0'; };
 }
 
+// ===== 其他功能 =====
 function toggleRotate() {
   allowRotate = !allowRotate;
   const t = document.getElementById('rotate-toggle');
@@ -817,6 +1012,9 @@ function toggleRotate() {
 
 function exportPNG() {
   const canvas = document.getElementById('wc-canvas');
+  if (canvas.style.display === 'none' || !wordFreqMap || Object.keys(wordFreqMap).length === 0) {
+    alert('请先生成词云'); return;
+  }
   const a = document.createElement('a');
   a.download = '词云_' + new Date().toLocaleDateString('zh') + '.png';
   a.href = canvas.toDataURL('image/png');
@@ -836,22 +1034,63 @@ function loadSample(type) {
   document.getElementById('input-text').value = SAMPLES[type];
 }
 
-initUI();
+// ===== UI 初始化 =====
+function initUI() {
+  const pg = document.getElementById('palette-grid');
+  PALETTES.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'palette-item' + (i === 0 ? ' active' : '');
+    el.style.background = `linear-gradient(135deg, ${p.colors[0]}, ${p.colors[2]}, ${p.colors[4]})`;
+    el.innerHTML = `<span>${p.name}</span>`;
+    el.onclick = () => { activePalette = i; document.querySelectorAll('.palette-item').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    pg.appendChild(el);
+  });
 
+  const br = document.getElementById('bg-row');
+  BG_COLORS.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-swatch' + (i === 0 ? ' active' : '');
+    el.style.background = c;
+    el.style.outline = c === '#ffffff' ? '1px solid rgba(255,255,255,0.2)' : 'none';
+    el.onclick = () => { activeBg = i; document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    br.appendChild(el);
+  });
+
+  const sg = document.getElementById('shape-grid');
+  SHAPES.forEach((s, i) => {
+    const el = document.createElement('button');
+    el.className = 'shape-btn' + (i === 0 ? ' active' : '');
+    el.textContent = s.name;
+    el.onclick = () => { activeShape = i; document.querySelectorAll('.shape-btn').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    sg.appendChild(el);
+  });
+
+  [['word-count','wc'],['font-max','fm'],['padding','pd']].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    const val = document.getElementById(key + '-val');
+    el.oninput = () => { val.textContent = el.value; };
+  });
+
+  document.getElementById('dict-word').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addDictWord();
+  });
+}
+
+// ===== 响应式画布 =====
 window.addEventListener('resize', () => {
   const area = document.getElementById('canvas-area');
-  const wrap = document.getElementById('canvas-wrap');
   const canvas = document.getElementById('wc-canvas');
-  const maxW = area.clientWidth - 64;
-  const maxH = area.clientHeight - 100;
+  const maxW = area.clientWidth - 56;
+  const maxH = area.clientHeight - 80;
   const aspect = 760 / 560;
   let W = Math.min(maxW, 760);
   let H = W / aspect;
   if (H > maxH) { H = maxH; W = H * aspect; }
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
+  canvas.style.width = Math.round(W) + 'px';
+  canvas.style.height = Math.round(H) + 'px';
 });
 
+initUI();
 setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
 </script>
 </body>
