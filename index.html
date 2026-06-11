@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>词云生成器</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: rgba(255,255,255,0.08);
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #7c6af5;
+    --accent2: #4ecdc4;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #7c6af5, #4ecdc4);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #b4a8ff, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+    height: calc(100vh - 81px);
+  }
+
+  .panel {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 180px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 14px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  .quick-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .quick-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .quick-btn:hover {
+    background: rgba(124, 106, 245, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .control-row label {
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 70px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .range-val {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .palette-item {
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+
+  .palette-item:hover { transform: scale(1.05); }
+
+  .palette-item.active {
+    border-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+  }
+
+  .palette-item span {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .shape-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .shape-btn {
+    height: 38px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .shape-btn:hover, .shape-btn.active {
+    background: rgba(124, 106, 245, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .shape-btn svg { width: 16px; height: 16px; }
+
+  .stopwords-area {
+    width: 100%;
+    height: 70px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 12px;
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  .stopwords-area:focus { border-color: var(--accent); }
+
+  .generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c6af5, #5b51d8);
+    border: none;
+    border-radius: var(--radius);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+
+  .generate-btn:hover::after { background: rgba(255,255,255,0.08); }
+  .generate-btn:active { transform: scale(0.98); }
+
+  .export-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .export-btn:hover {
+    background: var(--surface2);
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+
+  .canvas-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+
+  #wc-canvas {
+    display: block;
+  }
+
+  .tooltip {
+    position: fixed;
+    background: rgba(20,20,30,0.92);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    white-space: nowrap;
+  }
+
+  .tooltip strong { color: var(--accent); }
+  .tooltip span { color: var(--text-muted); font-size: 12px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  .stats-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    background: rgba(22,27,34,0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 8px 22px;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .stats-bar span strong { color: var(--text); font-weight: 600; }
+
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13,17,23,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 10;
+    display: none;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(124,106,245,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { font-size: 13px; color: var(--text-muted); }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .toggle-label { font-size: 13px; color: var(--text-muted); }
+
+  .toggle {
+    width: 36px;
+    height: 20px;
+    background: var(--surface2);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    top: 2px;
+    left: 2px;
+    transition: all 0.2s;
+  }
+
+  .toggle.on { background: var(--accent); border-color: var(--accent); }
+  .toggle.on::after { left: 18px; background: #fff; }
+
+  .bg-color-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bg-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .bg-swatch.active, .bg-swatch:hover { border-color: #fff; transform: scale(1.1); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">☁</div>
+  <h1>词云生成器</h1>
+  <p>输入文字，生成美观词云</p>
+</header>
+
+<div class="main">
+  <div class="panel">
+
+    <div>
+      <div class="section-label">输入文本</div>
+      <textarea id="input-text" placeholder="在此输入文本，支持中文、英文及混合内容。词语出现频次越高，在词云中显示越大。
+
+可以粘贴文章、评论、歌词、诗歌等任意内容…"></textarea>
+      <div class="quick-buttons" style="margin-top:8px;">
+        <button class="quick-btn" onclick="loadSample('tech')">科技文章</button>
+        <button class="quick-btn" onclick="loadSample('poem')">古诗词</button>
+        <button class="quick-btn" onclick="loadSample('food')">美食评论</button>
+        <button class="quick-btn" onclick="loadSample('city')">城市生活</button>
+        <button class="quick-btn" onclick="clearText()">清空</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">配色方案</div>
+      <div class="palette-grid" id="palette-grid"></div>
+    </div>
+
+    <div>
+      <div class="section-label">背景颜色</div>
+      <div class="bg-color-row" id="bg-row"></div>
+    </div>
+
+    <div>
+      <div class="section-label">词云形状</div>
+      <div class="shape-grid" id="shape-grid"></div>
+    </div>
+
+    <div class="control-group">
+      <div class="section-label">参数调节</div>
+
+      <div class="control-row">
+        <label>词语数量</label>
+        <input type="range" id="word-count" min="20" max="200" value="80" step="5">
+        <span class="range-val" id="wc-val">80</span>
+      </div>
+
+      <div class="control-row">
+        <label>最大字号</label>
+        <input type="range" id="font-max" min="40" max="120" value="72" step="4">
+        <span class="range-val" id="fm-val">72</span>
+      </div>
+
+      <div class="control-row">
+        <label>词语间距</label>
+        <input type="range" id="padding" min="1" max="10" value="3" step="1">
+        <span class="range-val" id="pd-val">3</span>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">允许竖排文字</span>
+        <div class="toggle" id="rotate-toggle" onclick="toggleRotate()"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">过滤停用词（逗号分隔）</div>
+      <textarea class="stopwords-area" id="stopwords" placeholder="的, 了, 是, 在, 和, 与, 也, 都, 但, 而, 这, 那, 有…">的, 了, 是, 在, 和, 与, 也, 都, 但, 而, 这, 那, 有, 一, 不, 我, 你, 他, 她, 它, 们, 中, 为, 以, 所, 很, 就, 对, 可, 又, 上, 下, 来, 去, 到, 出, 着, 过, 没, 只, 还, 会, 时, 把, 被, 要, 多, 少, 让, 说, 个, 人, 大, 小, 地</textarea>
+    </div>
+
+    <button class="generate-btn" onclick="generateCloud()">✦ 生成词云</button>
+    <button class="export-btn" onclick="exportPNG()">↓ 导出 PNG 图片</button>
+
+  </div>
+
+  <div class="canvas-area" id="canvas-area">
+    <div class="loading-overlay" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">词云生成中…</div>
+    </div>
+
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="wc-canvas" width="760" height="560"></canvas>
+    </div>
+
+    <div class="empty-state" id="empty-state">
+      <div class="icon">☁</div>
+      <p>在左侧输入文本<br>点击「生成词云」即可创建</p>
+    </div>
+
+    <div class="stats-bar" id="stats-bar" style="display:none;">
+      <span>共 <strong id="total-words">0</strong> 个词</span>
+      <span>展示 <strong id="shown-words">0</strong> 个</span>
+      <span>最高频 <strong id="top-word">—</strong></span>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <strong id="tt-word"></strong> &nbsp;
+  <span>出现 <strong id="tt-count" style="color:#fff"></strong> 次</span>
+</div>
+
+<script>
+const PALETTES = [
+  { name: '极光', colors: ['#a78bfa','#7c6af5','#4ecdc4','#45b7d1','#96e6a1','#d4fc79'] },
+  { name: '日落', colors: ['#ff6b6b','#feca57','#ff9f43','#ee5a24','#fd79a8','#e17055'] },
+  { name: '海洋', colors: ['#0093e9','#80d0c7','#00b4db','#48dbfb','#1e90ff','#74b9ff'] },
+  { name: '森林', colors: ['#2ecc71','#27ae60','#a8e063','#56ab2f','#badc58','#6ab04c'] },
+  { name: '樱花', colors: ['#fd79a8','#e84393','#fdcb6e','#e056ce','#ff7675','#fab1a0'] },
+  { name: '国潮', colors: ['#e74c3c','#c0392b','#f39c12','#d35400','#8e44ad','#2c3e50'] },
+  { name: '霓虹', colors: ['#00ff87','#60efff','#ff00d4','#c800ff','#ff8800','#fff200'] },
+  { name: '莫兰迪', colors: ['#b8a9c9','#9b8ea7','#d4a5a5','#b5c4b1','#c8b8a2','#a8bac4'] },
+];
+
+const BG_COLORS = [
+  '#0d1117','#ffffff','#1a1a2e','#0a0a0a','#f8f4ef','#1e3a5f','#2d1b33','#0d2818',
+];
+
+const SHAPES = [
+  { name: '矩形', id: 'rect' },
+  { name: '圆形', id: 'circle' },
+  { name: '菱形', id: 'diamond' },
+  { name: '星形', id: 'star' },
+];
+
+let activePalette = 0;
+let activeBg = 0;
+let activeShape = 0;
+let allowRotate = false;
+let wordFreqMap = {};
+let currentWords = [];
+
+function initUI() {
+  const pg = document.getElementById('palette-grid');
+  PALETTES.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'palette-item' + (i === 0 ? ' active' : '');
+    el.style.background = `linear-gradient(135deg, ${p.colors[0]}, ${p.colors[2]}, ${p.colors[4]})`;
+    el.innerHTML = `<span>${p.name}</span>`;
+    el.onclick = () => { activePalette = i; document.querySelectorAll('.palette-item').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    pg.appendChild(el);
+  });
+
+  const br = document.getElementById('bg-row');
+  BG_COLORS.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-swatch' + (i === 0 ? ' active' : '');
+    el.style.background = c;
+    el.style.border = c === '#ffffff' ? '2px solid rgba(255,255,255,0.2)' : '2px solid transparent';
+    el.onclick = () => { activeBg = i; document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    br.appendChild(el);
+  });
+
+  const sg = document.getElementById('shape-grid');
+  SHAPES.forEach((s, i) => {
+    const el = document.createElement('button');
+    el.className = 'shape-btn' + (i === 0 ? ' active' : '');
+    el.innerHTML = s.name;
+    el.onclick = () => { activeShape = i; document.querySelectorAll('.shape-btn').forEach(x => x.classList.remove('active')); el.classList.add('active'); };
+    sg.appendChild(el);
+  });
+
+  ['word-count', 'font-max', 'padding'].forEach(id => {
+    const el = document.getElementById(id);
+    const val = document.getElementById(id.replace('word-count','wc').replace('font-max','fm').replace('padding','pd') + '-val');
+    el.oninput = () => { val.textContent = el.value; };
+  });
+}
+
+function tokenizeChinese(text) {
+  const freq = {};
+  const stopwords = new Set(
+    document.getElementById('stopwords').value.split(/[,，\s]+/).map(w => w.trim()).filter(Boolean)
+  );
+  const chunks = text.split(/[\n\r。！？…""''【】《》「」、；：,.!?;:"'\[\]()（）\s]+/);
+  chunks.forEach(chunk => {
+    if (!chunk.trim()) return;
+    if (/^[\u4e00-\u9fff]+$/.test(chunk)) {
+      for (let len = 4; len >= 2; len--) {
+        for (let i = 0; i <= chunk.length - len; i++) {
+          const w = chunk.substring(i, i + len);
+          if (!stopwords.has(w)) freq[w] = (freq[w] || 0) + (len - 1);
+        }
+      }
+      for (let i = 0; i < chunk.length; i++) {
+        const c = chunk[i];
+        if (!stopwords.has(c)) freq[c] = (freq[c] || 0) + 0.3;
+      }
+    } else {
+      const words = chunk.match(/[a-zA-Z\u4e00-\u9fff]+/g) || [];
+      words.forEach(w => {
+        if (w.length >= 2 && !stopwords.has(w) && !stopwords.has(w.toLowerCase())) {
+          freq[w.toLowerCase() === w ? w : w] = (freq[w] || 0) + 1;
+        }
+      });
+    }
+  });
+  return freq;
+}
+
+function getShapeMask(shape, w, h) {
+  const offscreen = document.createElement('canvas');
+  offscreen.width = w; offscreen.height = h;
+  const ctx = offscreen.getContext('2d');
+  ctx.fillStyle = '#000';
+
+  if (shape === 'rect') {
+    ctx.fillRect(w * 0.05, h * 0.05, w * 0.9, h * 0.9);
+  } else if (shape === 'circle') {
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, Math.min(w,h) * 0.46, 0, Math.PI*2);
+    ctx.fill();
+  } else if (shape === 'diamond') {
+    ctx.beginPath();
+    ctx.moveTo(w/2, h*0.05);
+    ctx.lineTo(w*0.95, h/2);
+    ctx.lineTo(w/2, h*0.95);
+    ctx.lineTo(w*0.05, h/2);
+    ctx.closePath();
+    ctx.fill();
+  } else if (shape === 'star') {
+    const cx = w/2, cy = h/2;
+    const outerR = Math.min(w,h)*0.46, innerR = outerR*0.42;
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const angle = (i * Math.PI / 5) - Math.PI/2;
+      const r = i % 2 === 0 ? outerR : innerR;
+      const x = cx + Math.cos(angle) * r, y = cy + Math.sin(angle) * r;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  return offscreen;
+}
+
+function generateCloud() {
+  const text = document.getElementById('input-text').value.trim();
+  if (!text) { alert('请先输入文本内容'); return; }
+
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('canvas-wrap').style.opacity = '0.3';
+
+  setTimeout(() => {
+    wordFreqMap = tokenizeChinese(text);
+    const maxWords = parseInt(document.getElementById('word-count').value);
+    const palette = PALETTES[activePalette].colors;
+    const bgColor = BG_COLORS[activeBg];
+    const maxFontSize = parseInt(document.getElementById('font-max').value);
+    const padding = parseInt(document.getElementById('padding').value);
+    const shapeId = SHAPES[activeShape].id;
+
+    const sorted = Object.entries(wordFreqMap).sort((a,b) => b[1]-a[1]).slice(0, maxWords);
+    currentWords = sorted;
+
+    const totalWords = Object.keys(wordFreqMap).length;
+    document.getElementById('total-words').textContent = totalWords;
+    document.getElementById('shown-words').textContent = sorted.length;
+    document.getElementById('top-word').textContent = sorted[0] ? sorted[0][0] : '—';
+
+    const canvas = document.getElementById('wc-canvas');
+    const W = canvas.width, H = canvas.height;
+
+    const maskCanvas = getShapeMask(shapeId, W, H);
+    const list = sorted.map(([w, cnt]) => [w, cnt]);
+
+    const colorFn = (word) => {
+      const h = [...word].reduce((a,c) => a + c.charCodeAt(0), 0) % palette.length;
+      return palette[h];
+    };
+
+    const rotFn = allowRotate ? () => Math.random() > 0.7 ? Math.PI / 2 : 0 : () => 0;
+
+    try {
+      WordCloud(canvas, {
+        list: list,
+        gridSize: Math.round(8 * W / 760),
+        weightFactor: (size) => {
+          const max = sorted[0]?.[1] || 1;
+          return Math.pow(size / max, 0.6) * maxFontSize;
+        },
+        fontFamily: "'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+        fontWeight: '700',
+        color: colorFn,
+        rotateRatio: allowRotate ? 0.3 : 0,
+        rotationSteps: 2,
+        backgroundColor: bgColor,
+        padding: padding,
+        shape: (theta) => {
+          if (shapeId === 'circle') return 1;
+          if (shapeId === 'diamond') return 1 / (Math.abs(Math.cos(theta)) + Math.abs(Math.sin(theta)));
+          if (shapeId === 'star') {
+            const k = 5;
+            const t = (theta % (2*Math.PI/k)) - Math.PI/k;
+            return Math.cos(Math.PI/k) / Math.cos(t);
+          }
+          return Math.min(1/Math.abs(Math.cos(theta)), 1/Math.abs(Math.sin(theta)));
+        },
+        minSize: 10,
+        drawOutOfBound: false,
+        origin: [W/2, H/2],
+        hover: null,
+        click: null,
+      });
+    } catch(e) {}
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('canvas-wrap').style.opacity = '1';
+    document.getElementById('stats-bar').style.display = 'flex';
+
+    setupTooltip(canvas, sorted);
+  }, 80);
+}
+
+function setupTooltip(canvas, words) {
+  const tooltip = document.getElementById('tooltip');
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    const item = WordCloud.isWord(canvas, x, y);
+    if (item) {
+      const freq = wordFreqMap[item] || 0;
+      document.getElementById('tt-word').textContent = item;
+      document.getElementById('tt-count').textContent = Math.round(freq);
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 34) + 'px';
+      tooltip.style.opacity = '1';
+    } else {
+      tooltip.style.opacity = '0';
+    }
+  };
+  canvas.onmouseleave = () => { tooltip.style.opacity = '0'; };
+}
+
+function toggleRotate() {
+  allowRotate = !allowRotate;
+  const t = document.getElementById('rotate-toggle');
+  allowRotate ? t.classList.add('on') : t.classList.remove('on');
+}
+
+function exportPNG() {
+  const canvas = document.getElementById('wc-canvas');
+  const a = document.createElement('a');
+  a.download = '词云_' + new Date().toLocaleDateString('zh') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function clearText() { document.getElementById('input-text').value = ''; }
+
+const SAMPLES = {
+  tech: `人工智能 机器学习 深度学习 神经网络 大数据 云计算 区块链 元宇宙 数字化 自动化 算法 数据 模型 训练 推理 计算机视觉 自然语言处理 强化学习 生成模型 多模态 智能体 大语言模型 向量数据库 知识图谱 边缘计算 物联网 5G 芯片 半导体 量子计算 开源 框架 Python 代码 工程师 算力 GPU 推理加速 数字孪生 智慧城市 无人驾驶 机器人 增强现实 虚拟现实 数字化转型 平台 生态 创新 科技 未来 数字经济 产业升级 供应链 数据安全 隐私保护 网络安全 加密`,
+  poem: `春眠不觉晓 处处闻啼鸟 夜来风雨声 花落知多少 床前明月光 疑是地上霜 举头望明月 低头思故乡 白日依山尽 黄河入海流 欲穷千里目 更上一层楼 春风 明月 山水 诗意 远方 故乡 思念 情怀 岁月 流光 梅花 松竹 云霞 清风 明月 江山 诗酒 花好月圆 人间烟火 悠然 自在 清幽 苍翠 烟雨 江南 西湖 长安 黄山 桂林 泰山 黄河 长江`,
+  food: `美食 火锅 串串 小龙虾 烤肉 寿司 拉面 披萨 汉堡 奶茶 咖啡 甜品 蛋糕 面包 早餐 午餐 晚餐 宵夜 外卖 堂食 川菜 粤菜 湘菜 淮扬菜 东北菜 北京烤鸭 西安肉夹馍 成都担担面 重庆小面 广东早茶 上海生煎 云南过桥米线 新疆大盘鸡 香气 鲜嫩 麻辣 鲜香 酥脆 入味 回味 食材 新鲜 健康 营养 家常 美味 好吃 推荐 必吃 打卡`,
+  city: `北京 上海 深圳 广州 成都 杭州 南京 武汉 西安 重庆 地铁 公交 打车 骑行 共享单车 外卖 购物 咖啡厅 书店 公园 夜市 街头 巷子 胡同 社区 邻居 上班 通勤 生活 节奏 压力 快乐 美食 美景 网红 打卡 旅游 旅行 逛街 夜生活 烟火气 人情味 归属感 奋斗 机会 梦想 创业 年轻人 城市化 人口 活力 便利 智慧 未来`,
+};
+
+function loadSample(type) {
+  document.getElementById('input-text').value = SAMPLES[type];
+}
+
+initUI();
+
+window.addEventListener('resize', () => {
+  const area = document.getElementById('canvas-area');
+  const wrap = document.getElementById('canvas-wrap');
+  const canvas = document.getElementById('wc-canvas');
+  const maxW = area.clientWidth - 64;
+  const maxH = area.clientHeight - 100;
+  const aspect = 760 / 560;
+  let W = Math.min(maxW, 760);
+  let H = W / aspect;
+  if (H > maxH) { H = maxH; W = H * aspect; }
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+});
+
+setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+</script>
+</body>
+</html>
